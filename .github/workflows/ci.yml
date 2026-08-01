@@ -1,0 +1,30 @@
+name: CI
+
+# Upstream had Travis, which stopped running for open-source repos years
+# ago; there has been no CI since. The suite is fast, so run it on every
+# supported Node.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      # `npm ci` would need a lockfile refresh against the current
+      # registry; `npm install` keeps this green while the fork's own
+      # dependencies are still being published.
+      - run: npm install
+      - run: npx eslint src test
+      - run: npx jest
