@@ -21,10 +21,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: npm
-      # `npm ci` would need a lockfile refresh against the current
-      # registry; `npm install` keeps this green while the fork's own
-      # dependencies are still being published.
+          # No `cache: npm` — upstream gitignores package-lock.json, so
+          # there is no lockfile in the repo and setup-node errors out
+          # with "Dependencies lock file is not found" before installing
+          # anything. Committing a lockfile is a separate decision from
+          # turning CI on.
+      # `npm install` rather than `npm ci` for the same reason.
       - run: npm install
       - run: npx eslint src test
       - run: npx jest
