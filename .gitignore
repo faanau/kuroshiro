@@ -31,4 +31,7 @@ package-lock.json
 *.map
 docs
 tmp
-!**/.gitkeep
+!**/.gitkeepnode_modules/
+lib/
+dist/
+coverage/
